@@ -1,7 +1,8 @@
 {
+  "database": {
+    "rules": "database.rules.json"
+  },
   "firestore": {
-    "database": "(default)",
-    "location": "asia-southeast1",
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
@@ -15,9 +16,6 @@
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint"
       ]
     }
   ],
@@ -39,21 +37,12 @@
     },
     "singleProjectMode": true
   },
-  "database": {
-    "rules": "database.rules.json"
-  },
   "hosting": {
     "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
     ]
   }
 }

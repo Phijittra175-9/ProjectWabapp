@@ -1,5 +1,5 @@
 <script setup>
-import trophy from '@images/misc/trophy.png'
+import trophy from '@images/misc/trophy.png';
 </script>
 
 <template>

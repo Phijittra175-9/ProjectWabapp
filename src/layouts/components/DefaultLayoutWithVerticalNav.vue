@@ -1,10 +1,10 @@
 <script setup>
-import NavItems from '@/layouts/components/NavItems.vue'
-import logo from '@images/logo.svg?raw'
-import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
+import logo from '@/assets/images/logo-full.png'
 import Footer from '@/layouts/components/Footer.vue'
+import NavItems from '@/layouts/components/NavItems.vue'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import UserProfile from '@/layouts/components/UserProfile.vue'
+import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 </script>
 
 <template>
@@ -63,15 +63,9 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         class="app-logo app-title-wrapper"
       >
         <!-- eslint-disable vue/no-v-html -->
-        <div
-          class="d-flex"
-          v-html="logo"
-        />
+        <img :src="logo" height="86">
         <!-- eslint-enable -->
 
-        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
-          Materio
-        </h1>
       </RouterLink>
 
       <IconBtn

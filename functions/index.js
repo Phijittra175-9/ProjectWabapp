@@ -1,32 +1,64 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+const { functions, admin, auth, db, rtdb, cloudRegion } = require("./bootstrap")
+const utils = require("./utils")
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+exports.listTables = functions.region(cloudRegion).https.onCall(async (data, context) => {  
+  const result = []
+  const tables = await db.collection("tables").get()
+  tables.forEach(doc => {
+    result.push(doc.data())
+  })
+  return utils.createSuccess(result)
+});
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+exports.addTable = functions.region(cloudRegion).https.onCall(async (data, context) => {  
+  try{
+    await db.collection("tables").doc(data.name).set(data) 
+    return utils.createSuccess(data)
+  } catch (err) {
+    return utils.createReject(err.message)
+  }
+});
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+exports.reserveTable = functions.region(cloudRegion).https.onCall(async (data, context) => {
+  try{
+    await db.collection("tables").doc(data.name).update({status: "reserved"})
+    return utils.createSuccess(data)    
+  }catch(err){
+    return utils.createReject(err.message)
+  }
+});
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+exports.listQueues = functions.region(cloudRegion).https.onCall(async (data, context) => {
+  const result = []
+  const snapshot = await db.collection("queues").orderBy("timestamp").get()
+  snapshot.forEach(doc => result.push({ id: doc.id, ...doc.data() }))
+  return utils.createSuccess(result)
+
+});
+
+exports.enqueue = functions.region(cloudRegion).https.onCall(async (data, context) => {
+  try {
+    const item = {
+      name: data.name,
+      timestamp: Date.now()
+    }
+    const ref = await db.collection("queues").add(item)
+    return utils.createSuccess({ id: ref.id, ...item })
+  } catch (err) {
+    return utils.createReject(err.message)
+  }
+});
+
+exports.dequeue = functions.region(cloudRegion).https.onCall(async (data, context) => {
+  try {
+    const snapshot = await db.collection("queues").orderBy("timestamp").limit(1).get()
+    if (snapshot.empty) return utils.createReject("ไม่มีคิว")
+
+    const doc = snapshot.docs[0]
+    await doc.ref.delete()
+
+    return utils.createSuccess({ id: doc.id, ...doc.data() })
+  } catch (err) {
+    return utils.createReject(err.message)
+  }
+});

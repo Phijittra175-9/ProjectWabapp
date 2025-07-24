@@ -9,7 +9,8 @@
     "preview": "vite preview --port 5050",
     "lint": "eslint . -c .eslintrc.cjs --fix --ext .ts,.js,.cjs,.vue,.tsx,.jsx",
     "build:icons": "tsx src/plugins/iconify/build-icons.js",
-    "postinstall": "npm run build:icons"
+    "postinstall": "npm run build:icons",
+    "firebase": "firebase emulators:start --import=./db --export-on-exit=./db"
   },
   "dependencies": {
     "@floating-ui/dom": "1.5.3",
@@ -17,6 +18,7 @@
     "@vueuse/core": "^10.5.0",
     "@vueuse/math": "^10.5.0",
     "apexcharts": "3.37.0",
+    "firebase": "^12.0.0",
     "pinia": "^2.1.7",
     "prismjs": "^1.29.0",
     "roboto-fontface": "^0.10.0",
@@ -24,7 +26,7 @@
     "vue-flatpickr-component": "11.0.3",
     "vue-prism-component": "^2.0.0",
     "vue-router": "^4.2.5",
-    "vue3-apexcharts": "1.4.4",
+    "vue3-apexcharts": "^1.4.4",
     "vue3-perfect-scrollbar": "^1.6.1",
     "vuetify": "3.4.9",
     "webfontloader": "^1.6.28"
